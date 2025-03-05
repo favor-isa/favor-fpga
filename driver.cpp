@@ -3,16 +3,28 @@
 #include "Vcpu.h"
 #include "verilated.h"
 
+void
+dump(Vcpu *cpu) {
+    printf("led = %d\n", cpu->o_led);
+}
+
+void
+tick(Vcpu *cpu) {
+    cpu->eval();
+    cpu->i_clk = 1;
+    cpu->eval();
+    cpu->i_clk = 0;
+    cpu->eval();
+    dump(cpu);
+}
+
 int
 main(int argc, char **argv) {
     Verilated::commandArgs(argc, argv);
 
-    Vcpu *tb = new Vcpu;
+    Vcpu *cpu = new Vcpu;
 
-    for(int k = 0; k < 20; ++k) {
-        tb->i_sw = k & 1;
-        tb->eval();
-
-        printf("k = %2d, sw = %d, led = %d\n", k, tb->i_sw, tb->o_led);
+    for(int k = 0; k < 400; ++k) {
+        tick(cpu);
     }
 }

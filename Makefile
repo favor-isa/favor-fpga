@@ -18,7 +18,7 @@ sim: $(OBJS) obj_dir/V$(TOP_V)__ALL.a
 	g++ -c $< -o $@ -Wall -I/usr/share/verilator/include -Iobj_dir 
 
 obj_dir/V$(TOP_V)__ALL.a obj_dir/V$(TOP_V).h: $(TOP_V).v
-	verilator -Wall -cc $^
+	verilator -Wall -cc $^ "-GCOUNT_VALUE=25'd2"
 	cd obj_dir && make -f V$(TOP_V).mk
 
 .PHONY: clean

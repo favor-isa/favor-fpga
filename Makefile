@@ -1,18 +1,28 @@
 SRC= \
-	driver.cpp \
-	verilated_inst.cpp
+	driver.cpp
 
 OBJS=$(SRC:%.cpp=%.cpp.o)
 
-sim: $(OBJS) obj_dir/Vthruwire__ALL.a
+# TODO: Rewrite the makefile to match e.g.
+# https://github.com/Kode/verilator/blob/master/examples/tracing_c/Makefile_obj
+TOP_V=cpu
+
+sim: $(OBJS) obj_dir/V$(TOP_V)__ALL.a
 	g++ -I/usr/share/verilator/include \
 		-Iobj_dir \
 		$^ \
+		obj_dir/verilated.o obj_dir/verilated_threads.o \
 		-o $@
 
-%.cpp.o: %.cpp
-	g++ -c -I/usr/share/verilator/include -Iobj_dir $^ -o $@ -Wall
+%.cpp.o: %.cpp obj_dir/V$(TOP_V).h
+	g++ -c $< -o $@ -Wall -I/usr/share/verilator/include -Iobj_dir 
 
-obj_dir/Vthruwire__ALL.a: thruwire.v
+obj_dir/V$(TOP_V)__ALL.a obj_dir/V$(TOP_V).h: $(TOP_V).v
 	verilator -Wall -cc $^
-	cd obj_dir && make -f Vthruwire.mk
+	cd obj_dir && make -f V$(TOP_V).mk
+
+.PHONY: clean
+
+clean:
+	find . -name "*.o" -delete
+	rm -rf obj_dir

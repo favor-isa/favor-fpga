@@ -1,15 +1,17 @@
-#SRC= \
-#	driver.cpp
+SRC= \
+	driver.cpp \
+	verilated_inst.cpp
 
-#OBJS=$(SRC:%.cpp=%.cpp.o)
+OBJS=$(SRC:%.cpp=%.cpp.o)
 
-sim: driver.cpp obj_dir/Vthruwire__ALL.a
+sim: $(OBJS) obj_dir/Vthruwire__ALL.a
 	g++ -I/usr/share/verilator/include \
 		-Iobj_dir \
-		verilated_inst.cpp \
 		$^ \
-		obj_dir/Vthruwire__ALL.a \
 		-o $@
+
+%.cpp.o: %.cpp
+	g++ -c -I/usr/share/verilator/include -Iobj_dir $^ -o $@ -Wall
 
 obj_dir/Vthruwire__ALL.a: thruwire.v
 	verilator -Wall -cc $^

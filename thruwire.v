@@ -2,5 +2,5 @@ module thruwire(i_sw, o_led);
     input wire i_sw;
     output wire o_led;
 
-    assign o_led = i_sw;
+    helper the_help(i_sw, o_led);
 endmodule

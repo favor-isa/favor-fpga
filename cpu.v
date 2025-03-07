@@ -16,12 +16,12 @@ module cpu(input wire i_clk, output wire o_led);
     memory mem(i_clk, mem_read, mem_address, mem_value);
 
     /* General purpose registers */
-    reg [63:0] gpr [0:31];
+    reg [63:0] gpr [0:31] /* verilator public */;
 
     `include "cpustate.vinc"
 
     /* The current state that the CPU is in. */
-    reg [3:0]  state = STATE_FETCH;
+    reg [3:0]  state /* verilator public */ = STATE_FETCH;
 
     // Pass the mem_value directly to the decoder, as the instruction will be
     // available in mem_value once the read is complete.

@@ -21,6 +21,19 @@ assign sng = i_insn[24:0];
 
 `include "cpustate.vinc"
 
+// Handle singleton instructions.
+always @(posedge i_clk) if(k == 2'b00 && k0 == 4'b0000) begin
+    o_valid <= 1;
+    case(sng)
+        25'b0: o_halt <= 1;
+        default: o_valid <= 0;
+    endcase
+end
+
+always @(posedge i_clk) if(k != 2'b00) begin
+    o_valid <= 0;
+end
+
 // always @(posedge i_clk) begin
 //     o_valid <= 0;
 

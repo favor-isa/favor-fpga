@@ -37,7 +37,11 @@ module cpu(input wire i_clk, output wire o_led);
     always @(posedge i_clk) begin
         case(state)
             STATE_FETCH: begin
-                mem_address <= pc[13:0];
+                // Right now, memory is word-addressed, so we have to give an
+                // address in terms of 4bytes.
+                // TODO: Make the memory controller have byte-addressable ports
+                // or something.
+                mem_address <= pc[15:2];
                 mem_read <= 1;
                 state <= STATE_FETCH_WAIT;
                 pc <= pc + 4;

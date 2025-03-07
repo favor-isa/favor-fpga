@@ -39,8 +39,13 @@ module cpu(input wire i_clk, output wire o_led);
             STATE_FETCH: begin
                 mem_address <= pc[13:0];
                 mem_read <= 1;
-                state <= STATE_DECODE;
+                state <= STATE_FETCH_WAIT;
                 pc <= pc + 4;
+            end
+            // BRAM takes exactly one cycle.
+            STATE_FETCH_WAIT: begin
+                state <= STATE_DECODE;
+                mem_read <= 0;
             end
             STATE_DECODE: begin
                 // The decoder handles most of the heavy lifting here.

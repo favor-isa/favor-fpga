@@ -6,6 +6,7 @@ localparam STATE_FETCH   = 0;
 localparam STATE_DECODE  = 1;
 localparam STATE_EXECUTE = 2;
 localparam STATE_HALT    = 3;
+localparam STATE_FETCH_WAIT = 4;
 /* verilator lint_on UNUSEDPARAM */
 
 `endif

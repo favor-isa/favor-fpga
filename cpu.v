@@ -4,8 +4,8 @@ module cpu(input wire i_clk, output wire o_led);
     reg [13:0] mem_address = 14'b0;
 
     /* verilator lint_off UNUSEDSIGNAL */
-    wire [31:0] mem_value;
-    reg [63:0] pc = 0;
+    wire [31:0] mem_value /* verilator public */;
+    reg [63:0] pc /* verilator public */ = 0;
 
     wire dcd_valid;
     wire dcd_halt;

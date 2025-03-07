@@ -3,7 +3,7 @@ module decoder(
     input wire        i_clk,
     input wire [31:0] i_insn,
     output reg        o_valid = 0,
-    output reg        o_halt = 0
+    output reg        o_halt  = 0
 );
 
 // The "kind" of instruction.
@@ -25,7 +25,7 @@ assign sng = i_insn[24:0];
 always @(posedge i_clk) if(k == 2'b00 && k0 == 4'b0000) begin
     o_valid <= 1;
     case(sng)
-        25'b0: o_halt <= 1;
+        25'b0:   o_halt <= 1;
         default: o_valid <= 0;
     endcase
 end

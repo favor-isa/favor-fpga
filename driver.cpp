@@ -22,12 +22,20 @@ state_name(Vcpu *cpu) {
 
 void
 dump_at_clk(Vcpu *cpu) {
-    printf("cpu: %s\n", state_name(cpu));
+    const char *before = cpu->i_clk ?
+        " -->" :
+        "next" ;
+    printf("%s %s pc=%lx ", before, state_name(cpu), cpu->cpu->pc);
+    if(cpu->cpu->state == 1) { /* STATE_DECODE */
+        printf("insn=%x ", cpu->cpu->mem_value);
+    }
+    puts("");
 }
 
 void
 tick(Vcpu *cpu) {
     cpu->eval();
+    dump_at_clk(cpu);
     cpu->i_clk = 1;
     cpu->eval();
     dump_at_clk(cpu);

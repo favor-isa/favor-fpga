@@ -1,0 +1,11 @@
+`ifndef _cpustate_h
+`define _cpustate_h
+
+/* verilator lint_off UNUSEDPARAM */
+localparam STATE_FETCH   = 0;
+localparam STATE_DECODE  = 1;
+localparam STATE_EXECUTE = 2;
+localparam STATE_HALT    = 3;
+/* verilator lint_on UNUSEDPARAM */
+
+`endif

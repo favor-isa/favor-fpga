@@ -14,7 +14,7 @@ module cpu(input wire i_clk, output wire o_led);
    // reg [31:0] insn = 0;
     /* verilator lint_on UNUSEDSIGNAL */
 
-    memory mem(i_clk, mem_read, mem_address, mem_value);
+    memory mem(i_clk, mem_read, mem_address, mem_value) ;
 
     /* General purpose registers */
     reg [63:0] gpr [0:31] /* verilator public */;

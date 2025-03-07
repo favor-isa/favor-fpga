@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include "Vcpu.h"
 #include "Vcpu_cpu.h"
+#include "Vcpu_memory.h"
 #include "verilated.h"
 
 //void
@@ -47,11 +48,24 @@ tick(Vcpu *cpu) {
     //dump(cpu);
 }
 
+void
+dump_ram(Vcpu *cpu) {
+    for(int i = 0; i < 0x50; ++i) {
+        printf("ram[%04x]: %08x\n", i, cpu->cpu->mem->ram[i]);
+    }
+}
+
 int
 main(int argc, char **argv) {
     Verilated::commandArgs(argc, argv);
 
     Vcpu *cpu = new Vcpu;
+
+    // Initial eval() for dump_ram to work (this calls readmemh. Note this means
+    // we can swap out the assembly program we're testing without needing to 
+    // recompile anything).
+    cpu->eval();
+    dump_ram(cpu);
 
     for(int k = 0; k < 400; ++k) {
         tick(cpu);

@@ -19,7 +19,7 @@ module memory(
 // 19 - 5 = 14
 parameter LGMEMSZ = 19 - 5; 
 
-reg [31:0] ram[0:(1<<LGMEMSZ)-1];
+reg [31:0] ram[0:(1<<LGMEMSZ)-1] /* verilator public */;
 initial $readmemh("initial_ram.txt", ram);
 
 always @(posedge i_clk) begin

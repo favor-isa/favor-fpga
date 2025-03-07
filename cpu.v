@@ -1,7 +1,7 @@
 module cpu(input wire i_clk, output wire o_led);
 
     reg mem_read = 1;
-    reg [13:0] mem_address = 14'b0;
+    reg [13:0] mem_address /* verilator public */ = 14'b0;
 
     /* verilator lint_off UNUSEDSIGNAL */
     wire [31:0] mem_value /* verilator public */;

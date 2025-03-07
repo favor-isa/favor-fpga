@@ -16,6 +16,7 @@ state_name(Vcpu *cpu) {
         case 1:  return "decode ";
         case 2:  return "execute";
         case 3:  return "halt   ";
+        case 4:  return "fetch-w";
         default: return "unknown";
     }
 }
@@ -25,7 +26,9 @@ dump_at_clk(Vcpu *cpu) {
     const char *before = cpu->i_clk ?
         " -->" :
         "next" ;
-    printf("%s %s pc=%lx %d %d ", before, state_name(cpu), cpu->cpu->pc, cpu->cpu->dcd_valid, cpu->cpu->dcd_halt);
+    printf("%s %s pc=%lx dcd_valid=%d dcd_halt=%d mem_address=%x ", before,
+        state_name(cpu), cpu->cpu->pc, cpu->cpu->dcd_valid, cpu->cpu->dcd_halt,
+        cpu->cpu->mem_address);
     if(cpu->cpu->state == 1) { /* STATE_DECODE */
         printf("insn=%x ", cpu->cpu->mem_value);
     }

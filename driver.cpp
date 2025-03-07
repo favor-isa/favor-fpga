@@ -25,7 +25,7 @@ dump_at_clk(Vcpu *cpu) {
     const char *before = cpu->i_clk ?
         " -->" :
         "next" ;
-    printf("%s %s pc=%lx ", before, state_name(cpu), cpu->cpu->pc);
+    printf("%s %s pc=%lx %d %d ", before, state_name(cpu), cpu->cpu->pc, cpu->cpu->dcd_valid, cpu->cpu->dcd_halt);
     if(cpu->cpu->state == 1) { /* STATE_DECODE */
         printf("insn=%x ", cpu->cpu->mem_value);
     }

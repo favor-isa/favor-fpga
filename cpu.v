@@ -7,8 +7,9 @@ module cpu(input wire i_clk, output wire o_led);
     wire [31:0] mem_value /* verilator public */;
     reg [63:0] pc /* verilator public */ = 0;
 
-    wire dcd_valid;
-    wire dcd_halt;
+    wire dcd_valid /* verilator public */;
+    wire dcd_halt /* verilator public */;
+    wire dcd_decode;
     /** The currently executing instruction. */
    // reg [31:0] insn = 0;
     /* verilator lint_on UNUSEDSIGNAL */
@@ -25,7 +26,8 @@ module cpu(input wire i_clk, output wire o_led);
 
     // Pass the mem_value directly to the decoder, as the instruction will be
     // available in mem_value once the read is complete.
-    decoder dec(i_clk, mem_value, dcd_valid, dcd_halt);
+    assign dcd_decode = (state == STATE_DECODE);
+    decoder dec(i_clk, mem_value, dcd_decode, dcd_valid, dcd_halt);
 
     always @(*) begin
         /* Force the zero register to 0 */

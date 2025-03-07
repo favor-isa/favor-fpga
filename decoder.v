@@ -2,6 +2,7 @@
 module decoder(
     input wire        i_clk,
     input wire [31:0] i_insn,
+    input wire        i_decode,
     output reg        o_valid = 0,
     output reg        o_halt  = 0
 );
@@ -22,7 +23,7 @@ assign sng = i_insn[24:0];
 `include "cpustate.vinc"
 
 // Handle singleton instructions.
-always @(posedge i_clk) if(k == 2'b00 && k0 == 4'b0000) begin
+always @(posedge i_clk) if(i_decode && k == 2'b00 && k0 == 4'b0000) begin
     o_valid <= 1;
     case(sng)
         25'b0:   o_halt <= 1;
@@ -30,7 +31,7 @@ always @(posedge i_clk) if(k == 2'b00 && k0 == 4'b0000) begin
     endcase
 end
 
-always @(posedge i_clk) if(k != 2'b00) begin
+always @(posedge i_clk) if(i_decode && k != 2'b00) begin
     o_valid <= 0;
 end
 

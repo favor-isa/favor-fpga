@@ -1,0 +1,4 @@
+# Example configuration file.
+# This is a makefile fragment that should contain the following:
+GOWIN_SH=/path/to/gw_sh.exe
+GOWIN_PROGRAMMER=/path/to/programmer_cli.exe

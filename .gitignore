@@ -3,3 +3,10 @@
 
 *.o
 *.a
+
+# Gowin project.
+/favor-soc
+/commands.txt
+
+# Makefile configuration.
+/.config

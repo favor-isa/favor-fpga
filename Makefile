@@ -7,6 +7,18 @@ OBJS=$(SRC:%.cpp=%.cpp.o)
 # https://github.com/Kode/verilator/blob/master/examples/tracing_c/Makefile_obj
 TOP_V=cpu
 
+SRC_V=\
+	cpu.v \
+	decoder.v \
+	memory.v 
+
+SRC_FILES= \
+	$(SRC_V) \
+	cpustate.vinc \
+	initial_ram.txt
+
+GOWIN_FILES=$(SRC_FILES:%=favor-soc/%)
+
 sim: $(OBJS) obj_dir/V$(TOP_V)__ALL.a
 	g++ -I/usr/share/verilator/include \
 		-I/usr/share/verilator/include/vltstd \
@@ -27,3 +39,24 @@ obj_dir/V$(TOP_V)__ALL.a obj_dir/V$(TOP_V).h: $(TOP_V).v decoder.v memory.v init
 clean:
 	find . -name "*.o" -delete
 	rm -rf obj_dir
+
+-include .config
+
+favor-soc/favor-soc.gprj: $(SRC_FILES)
+	echo "create_project -name favor-soc -pn GW5A-LV25MG121NC1/I0 -device_version A -force"> commands.txt
+	$(foreach v,$(SRC_FILES),echo "add_file $(v)" >> commands.txt ;)
+	$(GOWIN_SH) commands.txt
+
+gowin-sh:
+	$(GOWIN_SH)
+
+gowin-build: $(GOWIN_FILES) favor-soc/favor-soc.gprj
+	$(GOWIN_SH) gowin-build.txt
+
+favor-soc/%: % | favor-soc/favor-soc.gprj
+	cp $< $@
+
+gowin-clean:
+	rm -rf favor-soc
+
+.PHONY: gowin-sh gowin-build gowin-clean

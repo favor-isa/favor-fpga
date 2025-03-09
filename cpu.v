@@ -61,5 +61,5 @@ module cpu(input wire i_clk, output wire o_led);
         endcase
     end
         
-    assign o_led = gpr[0][0];
+    assign o_led = state[1];
 endmodule

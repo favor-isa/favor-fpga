@@ -15,7 +15,8 @@ SRC_V=\
 SRC_FILES= \
 	$(SRC_V) \
 	cpustate.vinc \
-	initial_ram.txt
+	initial_ram.txt \
+	gowin-constrain.cst
 
 GOWIN_FILES=$(SRC_FILES:%=favor-soc/%)
 
@@ -42,8 +43,13 @@ clean:
 
 -include .config
 
-favor-soc/favor-soc.gprj: $(SRC_FILES)
-	echo "create_project -name favor-soc -pn GW5A-LV25MG121NC1/I0 -device_version A -force"> commands.txt
+favor-soc/favor-soc.gprj: | $(SRC_FILES)
+	echo "create_project -name favor-soc -pn GW5A-LV25MG121NC1/I0 -device_version A -force" > commands.txt
+# Use the ready LED as a gpio
+	echo "set_option -use_ready_as_gpio 1" >> commands.txt
+# Use the CPU as a gpio so we can route the clock. TODO is this the correct way
+# to set up the clock?
+	echo "set_option -use_cpu_as_gpio 1" >> commands.txt
 	$(foreach v,$(SRC_FILES),echo "add_file $(v)" >> commands.txt ;)
 	$(GOWIN_SH) commands.txt
 
@@ -53,7 +59,8 @@ gowin-sh:
 gowin-build: $(GOWIN_FILES) favor-soc/favor-soc.gprj
 	$(GOWIN_SH) gowin-build.txt
 
-favor-soc/%: % | favor-soc/favor-soc.gprj
+favor-soc/%: % 
+	mkdir -p favor-soc
 	cp $< $@
 
 gowin-clean:

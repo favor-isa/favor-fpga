@@ -1,3 +1,5 @@
+`default_nettype none
+
 module cpu(input wire i_clk, output wire o_led);
 
     reg mem_read = 1;

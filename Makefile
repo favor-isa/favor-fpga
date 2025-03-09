@@ -14,6 +14,8 @@ SRC_V=\
 
 SRC_FILES= \
 	$(SRC_V) \
+	top.v \
+	gowin_osc.v \
 	cpustate.vinc \
 	initial_ram.txt \
 	gowin-constrain.cst
@@ -49,7 +51,7 @@ favor-soc/favor-soc.gprj: | $(SRC_FILES)
 	echo "set_option -use_ready_as_gpio 1" >> commands.txt
 # Use the CPU as a gpio so we can route the clock. TODO is this the correct way
 # to set up the clock?
-	echo "set_option -use_cpu_as_gpio 1" >> commands.txt
+# echo "set_option -use_cpu_as_gpio 1" >> commands.txt
 	$(foreach v,$(SRC_FILES),echo "add_file $(v)" >> commands.txt ;)
 	$(GOWIN_SH) commands.txt
 

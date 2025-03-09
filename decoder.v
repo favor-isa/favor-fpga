@@ -1,3 +1,5 @@
+`default_nettype none
+
 /* verilator lint_off UNUSEDSIGNAL */
 module decoder(
     input wire        i_clk,

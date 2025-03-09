@@ -4,7 +4,7 @@ module decoder(
     input wire [31:0] i_insn,
     input wire        i_decode,
     output reg        o_valid = 0,
-    output reg        o_halt  = 0
+    output reg [3:0]  o_to_state = 0
 );
 
 // The "kind" of instruction.
@@ -22,17 +22,24 @@ assign sng = i_insn[24:0];
 
 `include "cpustate.vinc"
 
+always @(*) begin
+
+o_valid = 1;
+o_to_state = STATE_EXECUTE;
+
+// TODO: Delete i_decode
+
 // Handle singleton instructions.
-always @(posedge i_clk) if(i_decode && k == 2'b00 && k0 == 4'b0000) begin
-    o_valid <= 1;
+if(k == 2'b00 && k0 == 4'b0000) begin
     case(sng)
-        25'b0:   o_halt <= 1;
-        default: o_valid <= 0;
+        25'b0:   o_to_state = STATE_HALT;
+        default: o_valid = 0;
     endcase
 end
+else begin
+    o_valid = 0;
+end
 
-always @(posedge i_clk) if(i_decode && k != 2'b00) begin
-    o_valid <= 0;
 end
 
 // always @(posedge i_clk) begin

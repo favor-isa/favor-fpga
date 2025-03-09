@@ -11,8 +11,8 @@
 //}
 
 const char*
-state_name(Vcpu *cpu) {
-    switch(cpu->cpu->state) {
+state_name(int state) {
+    switch(state) {
         case 0:  return "fetch  ";
         case 1:  return "decode ";
         case 2:  return "execute";
@@ -27,8 +27,8 @@ dump_at_clk(Vcpu *cpu) {
     const char *before = cpu->i_clk ?
         " -->" :
         "next" ;
-    printf("%s %s pc=%04lx dcd_valid=%d dcd_halt=%d mem_address=%04x ", before,
-        state_name(cpu), cpu->cpu->pc, cpu->cpu->dcd_valid, cpu->cpu->dcd_halt,
+    printf("%s %s pc=%04lx dcd_valid=%d dcd_to_state=%s mem_address=%04x ", before,
+        state_name(cpu->cpu->state), cpu->cpu->pc, cpu->cpu->dcd_valid, state_name(cpu->cpu->dcd_to_state),
         cpu->cpu->mem_address);
     if(cpu->cpu->state == 1) { /* STATE_DECODE */
         printf("insn=%08x ", cpu->cpu->mem_value);

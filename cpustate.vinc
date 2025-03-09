@@ -1,5 +1,5 @@
-`ifndef _cpustate_h
-`define _cpustate_h
+//`ifndef _cpustate_h
+//`define _cpustate_h
 
 /* verilator lint_off UNUSEDPARAM */
 localparam STATE_FETCH   = 0;
@@ -9,4 +9,4 @@ localparam STATE_HALT    = 3;
 localparam STATE_FETCH_WAIT = 4;
 /* verilator lint_on UNUSEDPARAM */
 
-`endif
+//`endif

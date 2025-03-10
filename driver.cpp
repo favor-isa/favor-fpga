@@ -37,6 +37,13 @@ struct dump_flags flags = {
     .gpr = (1 << 8) | (1 << 9) | (1 << 10) | (1 << 11)
 };
 
+uint64_t
+read_reg(Vcpu *cpu, uint32_t idx) {
+    uint32_t low  = cpu->cpu->gpr[idx * 2];
+    uint32_t high = cpu->cpu->gpr[idx * 2 + 1];
+    return (uint64_t)(high) << 32L | low;
+}
+
 void
 dump_at_clk(Vcpu *cpu, struct dump_flags *f) {
     const char *before = cpu->i_clk ?
@@ -54,7 +61,7 @@ dump_at_clk(Vcpu *cpu, struct dump_flags *f) {
     }
     for(uint32_t i = 0; i < 32; ++i) {
         if(f->gpr & (1 << i)) {
-            printf("gpr[%02u]=%016lx ", i, cpu->cpu->gpr[i]);
+            printf("gpr[%02u]=%016lx ", i, read_reg(cpu, i));
         }
     }
     if(f->mem_address) {

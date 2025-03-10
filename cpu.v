@@ -25,16 +25,28 @@ module cpu(input wire i_clk, output wire o_led);
     /* The current state that the CPU is in. */
     reg [3:0]  state /* verilator public */ = STATE_FETCH;
 
-    // Pass the mem_value directly to the decoder, as the instruction will be
-    // available in mem_value once the read is complete.
-    assign dcd_decode = (state == STATE_DECODE);
-    decoder dec(i_clk, mem_value, dcd_decode, dcd_valid, dcd_to_state);
-
     wire [3:0]  alu_op = 0;
     wire [1:0]  alu_sz = 0;
     reg  [63:0] alu_src1 = 0;
     reg  [63:0] alu_src2 = 0;
     reg  [63:0] alu_dest = 0;
+
+    reg  [4:0]  reg_dst;
+
+    decoder dec(
+        .i_clk(i_clk),
+        .i_insn(mem_value),
+        .i_gpr(gpr),
+
+        .o_valid(dcd_valid),
+        .o_to_state(dcd_to_state),
+
+        .o_alu_op(alu_op),
+        .o_sz(alu_sz),
+        .o_src1(alu_src1),
+        .o_src2(alu_src2),
+        .o_dst(reg_dst)
+    );
 
     alu alu(
         .i_op(alu_op),
@@ -71,6 +83,7 @@ module cpu(input wire i_clk, output wire o_led);
                 state <= dcd_to_state;
             end
             STATE_EXECUTE: begin
+                gpr[reg_dst] <= alu_dest;
                 state <= STATE_FETCH;
             end
         endcase

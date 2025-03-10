@@ -4,9 +4,14 @@
 module decoder(
     input wire        i_clk,
     input wire [31:0] i_insn,
-    input wire        i_decode,
-    output reg        o_valid = 0,
-    output reg [3:0]  o_to_state = 0
+    input wire [63:0] i_gpr [0:31],
+    output reg        o_valid,
+    output reg [3:0]  o_to_state,
+    output reg [3:0]  o_alu_op,
+    output reg [1:0]  o_sz,
+    output reg [63:0] o_src1,
+    output reg [63:0] o_src2,
+    output reg  [4:0] o_dst
 );
 
 // The "kind" of instruction.
@@ -28,6 +33,12 @@ always @(*) begin
 
 o_valid = 1;
 o_to_state = STATE_EXECUTE;
+
+o_alu_op = 0;
+o_sz = i_insn[28:27];
+o_dst = i_insn[24:20];
+o_src1 = i_gpr[i_insn[19:15]];
+o_src2 = i_gpr[i_insn[14:10]];
 
 // TODO: Delete i_decode
 

@@ -18,7 +18,7 @@ module cpu(input wire i_clk, output wire o_led);
     memory mem(i_clk, mem_read, mem_address, mem_value) ;
 
     /* General purpose registers */
-    reg [63:0] gpr [0:31] /* verilator public */;
+    reg [2047:0] gpr /* verilator public */;
 
     `include "cpustate.vinc"
 
@@ -34,7 +34,7 @@ module cpu(input wire i_clk, output wire o_led);
     wire [1:0]  alu_sz = 0;
     reg  [63:0] alu_src1 = 0;
     reg  [63:0] alu_src2 = 0;
-    reg  [63:0] alu_dest = 0;
+    wire [63:0] alu_dest;
 
     reg  [4:0]  reg_dst;
 
@@ -60,11 +60,6 @@ module cpu(input wire i_clk, output wire o_led);
         .i_src2(alu_src2),
         .o_dest(alu_dest)
     );
-
-    always @(*) begin
-        /* Force the zero register to 0 */
-        gpr[0] = 64'b0;
-    end
 
     always @(posedge i_clk) begin
         case(state)
@@ -97,14 +92,16 @@ module cpu(input wire i_clk, output wire o_led);
             STATE_EXECUTE: begin
                 // By now the ALU should have computed the new value. So,
                 // update it.
-                gpr[reg_dst] <= alu_dest;
+                gpr[{ reg_dst, 6'b0 } +: 64] <= alu_dest;
                 state <= STATE_FETCH;
             end
             STATE_SRC1_TO_DST: begin
-                gpr[reg_dst] <= alu_src1;
+                gpr[{ reg_dst, 6'b0 } +: 64] <= alu_src1;
                 state <= STATE_FETCH;
             end
         endcase
+
+        gpr[63:0] <= 64'b0;
     end
         
     assign o_led = state[1];

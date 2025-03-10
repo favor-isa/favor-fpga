@@ -4,7 +4,7 @@
 module decoder(
     input wire        i_clk,
     input wire [31:0] i_insn,
-    input wire [63:0] i_gpr [0:31],
+    input wire [2047:0] i_gpr,
     output reg        o_valid,
     output reg [3:0]  o_to_state,
     output reg [3:0]  o_alu_op,
@@ -47,8 +47,8 @@ o_to_state = STATE_EXECUTE;
 o_alu_op = 0;
 o_sz = i_insn[28:27];
 //o_dst = i_insn[24:20];
-o_src1 = i_gpr[i_insn[19:15]];
-o_src2 = i_gpr[i_insn[14:10]];
+o_src1 = i_gpr[{ i_insn[19:15], 6'b0 } +: 64];
+o_src2 = i_gpr[{ i_insn[14:10], 6'b0 } +: 64];
 
 // Handle singleton instructions.
 if(k == 2'b00 && k0 == 4'b0000) begin
@@ -67,17 +67,17 @@ else if(k == 2'b01) begin
         end
         // load immediate upper
         4'b0001: begin
-            o_src1 = i_gpr[o_dst] | { 32'b0, k1_imm, 16'b0 };
+            o_src1 = i_gpr[{ o_dst, 6'b0 } +: 64] | { 32'b0, k1_imm, 16'b0 };
             o_to_state = STATE_SRC1_TO_DST;
         end
         // load immediate upper-upper
         4'b0010: begin
-            o_src1 = i_gpr[o_dst] | { 16'b0, k1_imm, 32'b0 };
+            o_src1 = i_gpr[{ o_dst, 6'b0 } +: 64] | { 16'b0, k1_imm, 32'b0 };
             o_to_state = STATE_SRC1_TO_DST;
         end
         // load immediate upper-upper-upper
         4'b0011: begin
-            o_src1 = i_gpr[o_dst] | { k1_imm, 48'b0 };
+            o_src1 = i_gpr[{ o_dst, 6'b0 } +: 64] | { k1_imm, 48'b0 };
             o_to_state = STATE_SRC1_TO_DST;
         end
         default: o_valid = 0;

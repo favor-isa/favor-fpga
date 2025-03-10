@@ -25,6 +25,10 @@ module cpu(input wire i_clk, output wire o_led);
     /* The current state that the CPU is in. */
     reg [3:0]  state /* verilator public */ = STATE_FETCH;
 
+    wire [63:0] dcd_src1;
+    wire [63:0] dcd_src2;
+    wire [4:0]  dcd_dst;
+
     wire [3:0]  alu_op = 0;
     wire [1:0]  alu_sz = 0;
     reg  [63:0] alu_src1 = 0;
@@ -43,9 +47,9 @@ module cpu(input wire i_clk, output wire o_led);
 
         .o_alu_op(alu_op),
         .o_sz(alu_sz),
-        .o_src1(alu_src1),
-        .o_src2(alu_src2),
-        .o_dst(reg_dst)
+        .o_src1(dcd_src1),
+        .o_src2(dcd_src2),
+        .o_dst(dcd_dst)
     );
 
     alu alu(
@@ -79,11 +83,23 @@ module cpu(input wire i_clk, output wire o_led);
                 mem_read <= 0;
             end
             STATE_DECODE: begin
-                // The decoder handles most of the heavy lifting here.
+                // The decoder handles most of the heavy lifting here. We just
+                // store the decoded state so we can refer to it later, even if
+                // we do additional memory reads.
                 state <= dcd_to_state;
+
+                alu_src1 <= dcd_src1;
+                alu_src2 <= dcd_src2;
+                reg_dst <= dcd_dst;
             end
             STATE_EXECUTE: begin
+                // By now the ALU should have computed the new value. So,
+                // update it.
                 gpr[reg_dst] <= alu_dest;
+                state <= STATE_FETCH;
+            end
+            STATE_SRC1_TO_DST: begin
+                gpr[reg_dst] <= alu_src1;
                 state <= STATE_FETCH;
             end
         endcase

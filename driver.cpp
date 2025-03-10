@@ -18,6 +18,7 @@ state_name(int state) {
         case 2:  return "execute";
         case 3:  return "halt   ";
         case 4:  return "fetch-w";
+        case 5:  return "s1->dst";
         default: return "unknown";
     }
 }
@@ -27,9 +28,9 @@ dump_at_clk(Vcpu *cpu) {
     const char *before = cpu->i_clk ?
         " -->" :
         "next" ;
-    printf("%s %s pc=%04lx dcd_valid=%d dcd_to_state=%s mem_address=%04x ", before,
+    printf("%s %s pc=%04lx dcd_valid=%d dcd_to_state=%s a0=%016lx mem_address=%04x ", before,
         state_name(cpu->cpu->state), cpu->cpu->pc, cpu->cpu->dcd_valid, state_name(cpu->cpu->dcd_to_state),
-        cpu->cpu->mem_address);
+        cpu->cpu->gpr[8], cpu->cpu->mem_address);
     if(cpu->cpu->state == 1) { /* STATE_DECODE */
         printf("insn=%08x ", cpu->cpu->mem_value);
     }

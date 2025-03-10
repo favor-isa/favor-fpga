@@ -34,7 +34,7 @@ struct dump_flags flags = {
     .dcd_valid = 0,
     .dcd_to_state = 0,
     .mem_address = 0,
-    .gpr = (1 << 8)
+    .gpr = (1 << 8) | (1 << 9) | (1 << 10) | (1 << 11)
 };
 
 void

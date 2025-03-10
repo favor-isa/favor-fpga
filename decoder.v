@@ -50,8 +50,6 @@ o_sz = i_insn[28:27];
 o_src1 = i_gpr[i_insn[19:15]];
 o_src2 = i_gpr[i_insn[14:10]];
 
-// TODO: Delete i_decode
-
 // Handle singleton instructions.
 if(k == 2'b00 && k0 == 4'b0000) begin
     case(sng)
@@ -85,31 +83,14 @@ else if(k == 2'b01) begin
         default: o_valid = 0;
     endcase
 end
+// 3-argument instructions.
+else if(k == 2'b11) begin
+    o_alu_op = i_insn[3:0];
+end
 else begin
     o_valid = 0;
 end
 
 end
-
-// always @(posedge i_clk) begin
-//     o_valid <= 0;
-
-//     case(k)
-//         2'b00: begin
-//             case(k0)
-//                 2'b00: begin
-
-//                 end
-
-//             endcase
-//         end
-//         2'b01: begin
-//         end
-//         2'b10: begin
-//         end
-//         2'b11: begin
-//         end
-//     endcase
-// end
 
 endmodule

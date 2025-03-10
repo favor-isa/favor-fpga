@@ -28,8 +28,9 @@ module cpu(input wire i_clk, output wire o_led);
     wire [63:0] dcd_src1;
     wire [63:0] dcd_src2;
     wire [4:0]  dcd_dst;
+    wire [3:0]  dcd_alu_op;
 
-    wire [3:0]  alu_op = 0;
+    reg  [3:0]  alu_op = 0;
     wire [1:0]  alu_sz = 0;
     reg  [63:0] alu_src1 = 0;
     reg  [63:0] alu_src2 = 0;
@@ -45,7 +46,7 @@ module cpu(input wire i_clk, output wire o_led);
         .o_valid(dcd_valid),
         .o_to_state(dcd_to_state),
 
-        .o_alu_op(alu_op),
+        .o_alu_op(dcd_alu_op),
         .o_sz(alu_sz),
         .o_src1(dcd_src1),
         .o_src2(dcd_src2),
@@ -90,6 +91,7 @@ module cpu(input wire i_clk, output wire o_led);
 
                 alu_src1 <= dcd_src1;
                 alu_src2 <= dcd_src2;
+                alu_op   <= dcd_alu_op;
                 reg_dst <= dcd_dst;
             end
             STATE_EXECUTE: begin

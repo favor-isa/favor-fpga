@@ -23,14 +23,44 @@ state_name(int state) {
     }
 }
 
+struct dump_flags {
+    uint32_t dcd_valid: 1;
+    uint32_t dcd_to_state: 1;
+    uint32_t mem_address: 1;
+    uint32_t gpr;
+};
+
+struct dump_flags flags = {
+    .dcd_valid = 0,
+    .dcd_to_state = 0,
+    .mem_address = 0,
+    .gpr = (1 << 8)
+};
+
 void
-dump_at_clk(Vcpu *cpu) {
+dump_at_clk(Vcpu *cpu, struct dump_flags *f) {
     const char *before = cpu->i_clk ?
         " -->" :
         "next" ;
-    printf("%s %s pc=%04lx dcd_valid=%d dcd_to_state=%s a0=%016lx mem_address=%04x ", before,
-        state_name(cpu->cpu->state), cpu->cpu->pc, cpu->cpu->dcd_valid, state_name(cpu->cpu->dcd_to_state),
-        cpu->cpu->gpr[8], cpu->cpu->mem_address);
+    
+    printf("%s %s pc=%04lx ", before,
+        state_name(cpu->cpu->state), cpu->cpu->pc);
+        
+    if(f->dcd_valid) {
+        printf("dcd_valid=%d ", cpu->cpu->dcd_valid);
+    }
+    if(f->dcd_to_state) {
+        printf("dcd_to_state=%s ", state_name(cpu->cpu->dcd_to_state));
+    }
+    for(uint32_t i = 0; i < 32; ++i) {
+        if(f->gpr & (1 << i)) {
+            printf("gpr[%02u]=%016lx ", i, cpu->cpu->gpr[i]);
+        }
+    }
+    if(f->mem_address) {
+        printf("mem_address=%04x ", cpu->cpu->mem_address);
+    }
+
     if(cpu->cpu->state == 1) { /* STATE_DECODE */
         printf("insn=%08x ", cpu->cpu->mem_value);
     }
@@ -40,10 +70,10 @@ dump_at_clk(Vcpu *cpu) {
 void
 tick(Vcpu *cpu) {
     cpu->eval();
-    dump_at_clk(cpu);
+    dump_at_clk(cpu, &flags);
     cpu->i_clk = 1;
     cpu->eval();
-    dump_at_clk(cpu);
+    dump_at_clk(cpu, &flags);
     cpu->i_clk = 0;
     cpu->eval();
     //dump(cpu);

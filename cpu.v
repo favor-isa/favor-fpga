@@ -1,3 +1,5 @@
+/* verilator lint_off UNUSEDSIGNAL */
+
 `default_nettype none
 
 module cpu(input wire i_clk, output wire o_led);
@@ -5,16 +7,13 @@ module cpu(input wire i_clk, output wire o_led);
     reg mem_read = 1;
     reg [13:0] mem_address /* verilator public */ = 14'b0;
 
-    /* verilator lint_off UNUSEDSIGNAL */
+    
     wire [31:0] mem_value /* verilator public */;
     reg [63:0] pc /* verilator public */ = 0;
 
     wire dcd_valid /* verilator public */;
     wire [3:0] dcd_to_state /* verilator public */;
     wire dcd_decode;
-    /** The currently executing instruction. */
-   // reg [31:0] insn = 0;
-    /* verilator lint_on UNUSEDSIGNAL */
 
     memory mem(i_clk, mem_read, mem_address, mem_value) ;
 
@@ -30,6 +29,20 @@ module cpu(input wire i_clk, output wire o_led);
     // available in mem_value once the read is complete.
     assign dcd_decode = (state == STATE_DECODE);
     decoder dec(i_clk, mem_value, dcd_decode, dcd_valid, dcd_to_state);
+
+    wire [3:0]  alu_op = 0;
+    wire [1:0]  alu_sz = 0;
+    reg  [63:0] alu_src1 = 0;
+    reg  [63:0] alu_src2 = 0;
+    reg  [63:0] alu_dest = 0;
+
+    alu alu(
+        .i_op(alu_op),
+        .i_sz(alu_sz),
+        .i_src1(alu_src1),
+        .i_src2(alu_src2),
+        .o_dest(alu_dest)
+    );
 
     always @(*) begin
         /* Force the zero register to 0 */

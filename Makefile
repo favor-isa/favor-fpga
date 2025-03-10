@@ -10,7 +10,8 @@ TOP_V=cpu
 SRC_V=\
 	cpu.v \
 	decoder.v \
-	memory.v 
+	memory.v \
+	alu.v
 
 SRC_FILES= \
 	$(SRC_V) \

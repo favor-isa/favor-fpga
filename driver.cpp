@@ -1,57 +1,46 @@
 #include <stdio.h>
 #include <stdlib.h>
-//#include "Vcpu.h"
-//#include "Vcpu_cpu.h"
-//#include "Vcpu_memory.h"
-#include "Vuart_tx.h"
-#include "Vuart_tx_uart_tx.h"
+#include "Vtop_sim.h"
 #include "verilated.h"
 
 void
-dump_at_clk(Vuart_tx *uart_tx) {
-    printf("%d | %c%d | %d [%d]\n", uart_tx->i_clk, uart_tx->i_char, uart_tx->i_write, uart_tx->o_tx, uart_tx->o_busy);
+dump_at_clk(Vtop_sim *top) {
+    printf("%d -> %d\n", top->i_clk, top->o_tx);
 }
 
 char data[] = "horse";
 int data_idx = 0;
 
 void
-tick(Vuart_tx *uart_tx) {
-    uart_tx->eval();
-    dump_at_clk(uart_tx);
-    uart_tx->i_clk = 1;
-    uart_tx->eval();
+tick(Vtop_sim *top) {
+    top->eval();
+    dump_at_clk(top);
+    top->i_clk = 1;
+    top->eval();
 
-    if(uart_tx->o_busy) {
-        uart_tx->i_write = 0;
-    }
-    else {
-        uart_tx->i_write = 1;
-        uart_tx->i_char = data[data_idx];
-        data_idx = (data_idx + 1) % 5;
-        printf("  .    .   expect: 0 ");
-        for(int i = 0; i < 8; ++i) {
-            printf("%c", ((uart_tx->i_char >> i) & 1) ? '1' : '0');
-        }
-        printf(" 0\n");
-    }
-
-    dump_at_clk(uart_tx);
-    uart_tx->i_clk = 0;
-    uart_tx->eval();
+    dump_at_clk(top);
+    top->i_clk = 0;
+    top->eval();
 }
 
 int
 main(int argc, char **argv) {
     Verilated::commandArgs(argc, argv);
 
-    Vuart_tx *tx = new Vuart_tx;
+    Vtop_sim *top = new Vtop_sim;
 
-    
-    tx->i_char = '?';
+    char chars[] = "horse";
 
-    for(int k = 0; k < (Vuart_tx_uart_tx::CLKS_PER_BIT + 1) * 10 * 5; ++k) {
-        tick(tx);
-        
+    tick(top);
+    tick(top);
+
+    for(int i = 0; i < 5; ++i) {
+        char next = chars[i];
+        printf("expect: 0 ");
+        for(int j = 0; j < 8; ++j) printf("%c", (next >> j) & 1 ? '1' : '0');
+        printf(" 1\n");
+        for(int k = 0; k < 11; ++k) {
+            tick(top);
+        }
     }
 }

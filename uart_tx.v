@@ -22,6 +22,11 @@ reg [1:0] state = STATE_IDLE;
 
 reg [2:0] count_bits;
 
+// Important: o_tx must start at 1 because that's the idle value.
+initial begin
+    o_tx = 1;
+end
+
 /* verilator lint_off UNSIGNED */
 always @(posedge i_clk) begin
     if(step < CLKS_PER_BIT) begin

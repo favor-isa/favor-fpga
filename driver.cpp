@@ -34,13 +34,15 @@ main(int argc, char **argv) {
     tick(top);
     tick(top);
 
-    for(int i = 0; i < 5; ++i) {
-        char next = chars[i];
-        printf("expect: 0 ");
-        for(int j = 0; j < 8; ++j) printf("%c", (next >> j) & 1 ? '1' : '0');
-        printf(" 1\n");
-        for(int k = 0; k < 11; ++k) {
-            tick(top);
+    for(int loop = 0; loop < 10; ++loop) {
+        for(int i = 0; i < 5; ++i) {
+            char next = chars[i];
+            printf("expect: '%c' 0 ", next);
+            for(int j = 0; j < 8; ++j) printf("%c", (next >> j) & 1 ? '1' : '0');
+            printf(" 1\n");
+            for(int k = 0; k < 11; ++k) {
+                tick(top);
+            }
         }
     }
 }

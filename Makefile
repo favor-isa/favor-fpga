@@ -5,13 +5,14 @@ OBJS=$(SRC:%.cpp=%.cpp.o)
 
 # TODO: Rewrite the makefile to match e.g.
 # https://github.com/Kode/verilator/blob/master/examples/tracing_c/Makefile_obj
-TOP_V=cpu
+TOP_V=uart_tx
 
 SRC_V=\
 	cpu.v \
 	decoder.v \
 	memory.v \
-	alu.v
+	alu.v \
+	uart_tx.v
 
 SRC_FILES= \
 	$(SRC_V) \
@@ -34,8 +35,8 @@ sim: $(OBJS) obj_dir/V$(TOP_V)__ALL.a
 %.cpp.o: %.cpp obj_dir/V$(TOP_V).h
 	g++ -c $< -o $@ -Wall -I/usr/share/verilator/include -I/usr/share/verilator/include/vltstd -Iobj_dir 
 
-obj_dir/V$(TOP_V)__ALL.a obj_dir/V$(TOP_V).h: $(TOP_V).v decoder.v memory.v initial_ram.txt
-	verilator -Wall -cc $<
+obj_dir/V$(TOP_V)__ALL.a obj_dir/V$(TOP_V).h: $(TOP_V).v decoder.v memory.v initial_ram.txt Makefile
+	verilator -Wall -cc $< "-GCLKS_PER_BIT=10'd0"
 	cd obj_dir && make -f V$(TOP_V).mk
 
 .PHONY: clean

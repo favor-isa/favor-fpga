@@ -35,7 +35,7 @@ uart_buf ubuf(
     .o_char(u_char),
     .o_write(u_write)
 );
-uart_tx #(.CLKS_PER_BIT(0)) utx 
+uart_tx utx 
 (
     .i_clk(osc_clk),
     .i_char(u_char),

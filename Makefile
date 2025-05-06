@@ -8,10 +8,6 @@ OBJS=$(SRC:%.cpp=%.cpp.o)
 TOP_V=top_sim
 
 SRC_V=\
-	cpu.v \
-	decoder.v \
-	memory.v \
-	alu.v \
 	uart_tx.v \
 	uart_buf.v
 
@@ -21,7 +17,7 @@ SRC_FILES= \
 	gowin_osc.v \
 	cpustate.vinc \
 	initial_ram.txt \
-	gowin-constrain.cst
+	gowin-constrain-uart.cst
 
 GOWIN_FILES=$(SRC_FILES:%=favor-soc/%)
 
@@ -48,7 +44,7 @@ clean:
 
 -include .config
 
-favor-soc/favor-soc.gprj: | $(SRC_FILES)
+favor-soc/favor-soc.gprj: | $(GOWIN_FILES)
 	echo "create_project -name favor-soc -pn GW5A-LV25MG121NC1/I0 -device_version A -force" > commands.txt
 # Use the ready LED as a gpio
 	echo "set_option -use_ready_as_gpio 1" >> commands.txt

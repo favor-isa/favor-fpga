@@ -29,7 +29,7 @@ end
 
 /* verilator lint_off UNSIGNED */
 always @(posedge i_clk) begin
-    if(step < CLKS_PER_BIT) begin
+    if(step < (CLKS_PER_BIT - 1)) begin
         step <= step + 1;
         if(i_write & ~o_busy) begin
             data   <= i_char;
